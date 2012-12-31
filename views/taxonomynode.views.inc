@@ -25,7 +25,7 @@ function taxonomynode_views_data() {
   $data['taxonomynode']['nid'] = array(
     'group' => t('Taxonomy Node'),
     'title' => 'Node ID',
-    'help' => t('Get the node linked with the term.'),
+    'help' => t('Get the taxonomy node linked with the term.'),
     'relationship' => array(
       'base' => 'node',
       'field' => 'nid',
