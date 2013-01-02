@@ -96,7 +96,7 @@ function _taxonomynode_create_term($node) {
   return $terms;
 }
 
-function _taxonomynode_create_node($tid, $vid, $term_name, $parents, $new_nid = null) {
+function _taxonomynode_create_node($tid, $vid, $term_name, $parents, $new_nid = null, $lang = null) {
   $taxonomynode_settings = variable_get("taxonomynode_{$vid}", array());
   if ($taxonomynode_settings['content_type']) {
     $nid = _taxonomynode_get_nid_from_tid($tid);
@@ -120,6 +120,12 @@ function _taxonomynode_create_node($tid, $vid, $term_name, $parents, $new_nid = 
         $node->uid = $user->uid;
         // Always use the default revision setting.
         $node->revision = in_array('revision', $node_options);
+        
+        // Create a node in the language of the term if defined 
+        if ($lang){
+          $node->language = $lang;
+        }
+        
         $node->taxonomy = array();
       }
     }
@@ -137,6 +143,7 @@ function _taxonomynode_create_node($tid, $vid, $term_name, $parents, $new_nid = 
     foreach ($parents as $pid) {
       $node->taxonomy[] = $pid;
     }
+    dpm($node);
     node_save($node);
 
     if (!$nid) {
@@ -457,7 +464,14 @@ function taxonomynode_create($tid) {
   $term = taxonomy_get_term($tid);
   $parents = taxonomy_get_parents($tid);
   _taxonomynode_toggle();
-  _taxonomynode_create_node($tid, $term->vid, $term->name, array_keys($parents));
+  
+  //Create the node in the language of the term if defined
+  if (issset($term->language)){
+    $lang = $term->language;
+  }
+  
+  // null is a $new_nid variable not used here
+  _taxonomynode_create_node($tid, $term->vid, $term->name, array_keys($parents), null, $lang);
   _taxonomynode_toggle();
   drupal_set_message(t('Taxonomy Node: Node created.'));
   drupal_goto('admin/content/taxonomy/edit/term/'. $tid);
