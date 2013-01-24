@@ -143,7 +143,6 @@ function _taxonomynode_create_node($tid, $vid, $term_name, $parents, $new_nid = 
     foreach ($parents as $pid) {
       $node->taxonomy[] = $pid;
     }
-    dpm($node);
     node_save($node);
 
     if (!$nid) {
